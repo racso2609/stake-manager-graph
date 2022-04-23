@@ -74,69 +74,6 @@ export class AdminRole extends Entity {
   }
 }
 
-export class RevokedAdmin extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-
-    this.set("role", Value.fromBytes(Bytes.empty()));
-    this.set("account", Value.fromString(""));
-    this.set("sender", Value.fromString(""));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(id != null, "Cannot save RevokedAdmin entity without an ID");
-    if (id) {
-      assert(
-        id.kind == ValueKind.STRING,
-        `Entities of type RevokedAdmin must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
-      );
-      store.set("RevokedAdmin", id.toString(), this);
-    }
-  }
-
-  static load(id: string): RevokedAdmin | null {
-    return changetype<RevokedAdmin | null>(store.get("RevokedAdmin", id));
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value!.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get role(): Bytes {
-    let value = this.get("role");
-    return value!.toBytes();
-  }
-
-  set role(value: Bytes) {
-    this.set("role", Value.fromBytes(value));
-  }
-
-  get account(): string {
-    let value = this.get("account");
-    return value!.toString();
-  }
-
-  set account(value: string) {
-    this.set("account", Value.fromString(value));
-  }
-
-  get sender(): string {
-    let value = this.get("sender");
-    return value!.toString();
-  }
-
-  set sender(value: string) {
-    this.set("sender", Value.fromString(value));
-  }
-}
-
 export class Stake extends Entity {
   constructor(id: string) {
     super();
@@ -194,6 +131,8 @@ export class User extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
+
+    this.set("roles", Value.fromBytesArray(new Array(0)));
   }
 
   save(): void {
@@ -221,37 +160,21 @@ export class User extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get stakes(): Array<string> | null {
+  get stakes(): Array<string> {
     let value = this.get("stakes");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toStringArray();
-    }
+    return value!.toStringArray();
   }
 
-  set stakes(value: Array<string> | null) {
-    if (!value) {
-      this.unset("stakes");
-    } else {
-      this.set("stakes", Value.fromStringArray(<Array<string>>value));
-    }
+  set stakes(value: Array<string>) {
+    this.set("stakes", Value.fromStringArray(value));
   }
 
-  get roles(): Array<Bytes> | null {
+  get roles(): Array<Bytes> {
     let value = this.get("roles");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBytesArray();
-    }
+    return value!.toBytesArray();
   }
 
-  set roles(value: Array<Bytes> | null) {
-    if (!value) {
-      this.unset("roles");
-    } else {
-      this.set("roles", Value.fromBytesArray(<Array<Bytes>>value));
-    }
+  set roles(value: Array<Bytes>) {
+    this.set("roles", Value.fromBytesArray(value));
   }
 }

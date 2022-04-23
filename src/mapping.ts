@@ -1,4 +1,4 @@
-import { BigInt } from "@graphprotocol/graph-ts";
+import { ByteArray, Bytes } from "@graphprotocol/graph-ts";
 import {
   StakeManager,
   RoleAdminChanged,
@@ -6,13 +6,7 @@ import {
   RoleRevoked,
   StakeCreation,
 } from "../generated/StakeManager/StakeManager";
-import {
-  User,
-  AdminRole,
-  Stake,
-  RevokedAdmin,
-  Token,
-} from "../generated/schema";
+import { User, AdminRole, Stake } from "../generated/schema";
 
 export function handleRoleAdminChanged(event: RoleAdminChanged): void {
   // Entities can be loaded from the store using a string ID; this ID
@@ -66,8 +60,9 @@ export function handleRoleGranted(event: RoleGranted): void {
   if (!entity) {
     entity = new User(event.params.account.toHex());
   }
-
-  entity.roles.push(event.params.role);
+  const roles = entity.roles;
+  roles.push(event.params.role);
+  entity.roles = roles;
   entity.save();
 }
 
@@ -77,7 +72,16 @@ export function handleRoleRevoked(event: RoleRevoked): void {
     entity = new User(event.params.account.toHex());
   }
 
-  entity.roles.push(event.params.role);
+  let roles: Bytes[] = [];
+  const revokedRole = event.params.role;
+
+  for (let i = 0; i < entity.roles.length; i++) {
+    const role: Bytes = entity.roles[i];
+    if (entity.roles[i] !== revokedRole) roles.push(role);
+  }
+
+  entity.roles = roles;
+
   entity.save();
 }
 
@@ -86,8 +90,16 @@ export function handleStakeCreation(event: StakeCreation): void {
   if (!entity) {
     entity = new Stake(event.params.stakingReward.toHex());
   }
+  let admin = User.load(event.params.admin.toHex());
 
-  entity.admin = event.params.admin;
-  entity.lpToken = event.params.stakingReward.toHex();
+  if (!admin) {
+    admin = new User(event.params.admin.toHex());
+  }
+  const stakes = admin.stakes;
+  stakes.push(entity.id);
+  admin.stakes = stakes;
+
+  entity.admin = admin.id;
+  entity.lpToken = event.params.stakingReward.toString();
   entity.save();
 }
