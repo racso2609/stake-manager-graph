@@ -1,36 +1,42 @@
-import { BigInt } from "@graphprotocol/graph-ts"
+import { BigInt } from "@graphprotocol/graph-ts";
 import {
   StakeManager,
   RoleAdminChanged,
   RoleGranted,
   RoleRevoked,
-  StakeCreation
-} from "../generated/StakeManager/StakeManager"
-import { ExampleEntity } from "../generated/schema"
+  StakeCreation,
+} from "../generated/StakeManager/StakeManager";
+import {
+  User,
+  AdminRole,
+  Stake,
+  RevokedAdmin,
+  Token,
+} from "../generated/schema";
 
 export function handleRoleAdminChanged(event: RoleAdminChanged): void {
   // Entities can be loaded from the store using a string ID; this ID
   // needs to be unique across all entities of the same type
-  let entity = ExampleEntity.load(event.transaction.from.toHex())
+  let entity = AdminRole.load(event.params.role.toHex());
 
   // Entities only exist after they have been saved to the store;
   // `null` checks allow to create entities on demand
   if (!entity) {
-    entity = new ExampleEntity(event.transaction.from.toHex())
+    entity = new AdminRole(event.params.role.toHex());
 
     // Entity fields can be set using simple assignments
-    entity.count = BigInt.fromI32(0)
+    entity.newAdminRole = event.params.newAdminRole;
   }
 
   // BigInt and BigDecimal math are supported
-  entity.count = entity.count + BigInt.fromI32(1)
+  entity.newAdminRole = event.params.newAdminRole;
 
   // Entity fields can be set based on event parameters
-  entity.role = event.params.role
-  entity.previousAdminRole = event.params.previousAdminRole
+  entity.role = event.params.role;
+  entity.previousAdminRole = event.params.previousAdminRole;
 
   // Entities can be written to the store with `.save()`
-  entity.save()
+  entity.save();
 
   // Note: If a handler doesn't require existing field values, it is faster
   // _not_ to load the entity from the store. Instead, create it fresh with
@@ -59,7 +65,14 @@ export function handleRoleAdminChanged(event: RoleAdminChanged): void {
   // - contract.supportsInterface(...)
 }
 
-export function handleRoleGranted(event: RoleGranted): void {}
+export function handleRoleGranted(event: RoleGranted): void {
+  // Entities can be loaded from the store using a string ID; this ID
+  // needs to be unique across all entities of the same type
+  let entity = User.load(event.params.account.toHex());
+
+  entity.role = event.params.role;
+  entity.save();
+}
 
 export function handleRoleRevoked(event: RoleRevoked): void {}
 

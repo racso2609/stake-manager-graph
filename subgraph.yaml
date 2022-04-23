@@ -1,4 +1,4 @@
-specVersion: 0.0.1
+specVersion: 0.0.2
 schema:
   file: ./schema.graphql
 dataSources:
@@ -8,6 +8,7 @@ dataSources:
     source:
       address: "0x5bDD54010F6715A521D1f05457E4473a19D6196f"
       abi: StakeManager
+      startBlock: 11565020
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -17,6 +18,8 @@ dataSources:
         - RoleGranted
         - RoleRevoked
         - StakeCreation
+        - Token
+        - User
       abis:
         - name: StakeManager
           file: ./abis/StakeManager.json

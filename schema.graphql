@@ -1,6 +1,28 @@
-type ExampleEntity @entity {
+type AdminRole @entity {
   id: ID!
-  count: BigInt!
-  role: Bytes! # bytes32
+  role: Bytes!
+  newAdminRole: Bytes! # bytes32
   previousAdminRole: Bytes! # bytes32
+}
+
+type RevokedAdmin @entity {
+  id: ID!
+  role: Bytes!
+  account: User! # bytes32
+  sender: User!
+}
+type Stake @entity {
+  id: ID!
+  admin: User!
+  lpToken: Token!
+}
+type Token @entity {
+  id: ID!
+  stake: Stake! @derivedFrom(field: "lpToken")
+}
+
+type User @entity {
+  id: ID!
+  stakes: [Stake!] @derivedFrom(field: "admin")
+  roles: [Bytes!]
 }
