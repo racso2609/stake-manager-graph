@@ -23,19 +23,13 @@ export function handleRoleAdminChanged(event: RoleAdminChanged): void {
   // `null` checks allow to create entities on demand
   if (!entity) {
     entity = new AdminRole(event.params.role.toHex());
-
-    // Entity fields can be set using simple assignments
-    entity.newAdminRole = event.params.newAdminRole;
   }
 
-  // BigInt and BigDecimal math are supported
   entity.newAdminRole = event.params.newAdminRole;
 
-  // Entity fields can be set based on event parameters
   entity.role = event.params.role;
   entity.previousAdminRole = event.params.previousAdminRole;
 
-  // Entities can be written to the store with `.save()`
   entity.save();
 
   // Note: If a handler doesn't require existing field values, it is faster
@@ -77,6 +71,23 @@ export function handleRoleGranted(event: RoleGranted): void {
   entity.save();
 }
 
-export function handleRoleRevoked(event: RoleRevoked): void {}
+export function handleRoleRevoked(event: RoleRevoked): void {
+  let entity = User.load(event.params.account.toHex());
+  if (!entity) {
+    entity = new User(event.params.account.toHex());
+  }
 
-export function handleStakeCreation(event: StakeCreation): void {}
+  entity.roles.push(event.params.role);
+  entity.save();
+}
+
+export function handleStakeCreation(event: StakeCreation): void {
+  let entity = Stake.load(event.params.stakingReward.toHex());
+  if (!entity) {
+    entity = new Stake(event.params.stakingReward.toHex());
+  }
+
+  entity.admin = event.params.admin;
+  entity.lpToken = event.params.stakingReward.toHex();
+  entity.save();
+}

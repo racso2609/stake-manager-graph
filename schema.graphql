@@ -14,11 +14,7 @@ type RevokedAdmin @entity {
 type Stake @entity {
   id: ID!
   admin: User!
-  lpToken: Token!
-}
-type Token @entity {
-  id: ID!
-  stake: Stake! @derivedFrom(field: "lpToken")
+  lpToken: String!
 }
 
 type User @entity {
