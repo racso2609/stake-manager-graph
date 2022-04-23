@@ -70,7 +70,7 @@ export function handleRoleGranted(event: RoleGranted): void {
   // needs to be unique across all entities of the same type
   let entity = User.load(event.params.account.toHex());
 
-  entity.role = event.params.role;
+  entity.roles = event.params.role;
   entity.save();
 }
 
