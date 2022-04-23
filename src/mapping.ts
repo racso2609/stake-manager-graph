@@ -69,8 +69,11 @@ export function handleRoleGranted(event: RoleGranted): void {
   // Entities can be loaded from the store using a string ID; this ID
   // needs to be unique across all entities of the same type
   let entity = User.load(event.params.account.toHex());
+  if (!entity) {
+    entity = new User(event.params.account.toHex());
+  }
 
-  entity.roles = event.params.role;
+  entity.roles.push(event.params.role);
   entity.save();
 }
 
