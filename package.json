@@ -1,13 +1,13 @@
 {
-  "name": "test",
+  "name": "stake-manager-graph",
   "license": "UNLICENSED",
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ stakeManager/test",
-    "create-local": "graph create --node http://localhost:8020/ stakeManager/test",
-    "remove-local": "graph remove --node http://localhost:8020/ stakeManager/test",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 stakeManager/test"
+    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ racso2609/stake-manager-graph",
+    "create-local": "graph create --node http://localhost:8020/ racso2609/stake-manager-graph",
+    "remove-local": "graph remove --node http://localhost:8020/ racso2609/stake-manager-graph",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 racso2609/stake-manager-graph"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.29.0",
