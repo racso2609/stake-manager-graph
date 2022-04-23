@@ -1,0 +1,32 @@
+specVersion: 0.0.1
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: StakeManager
+    network: ropsten
+    source:
+      address: "0x5bDD54010F6715A521D1f05457E4473a19D6196f"
+      abi: StakeManager
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - RoleAdminChanged
+        - RoleGranted
+        - RoleRevoked
+        - StakeCreation
+      abis:
+        - name: StakeManager
+          file: ./abis/StakeManager.json
+      eventHandlers:
+        - event: RoleAdminChanged(indexed bytes32,indexed bytes32,indexed bytes32)
+          handler: handleRoleAdminChanged
+        - event: RoleGranted(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleGranted
+        - event: RoleRevoked(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleRevoked
+        - event: StakeCreation(address,indexed address)
+          handler: handleStakeCreation
+      file: ./src/mapping.ts
