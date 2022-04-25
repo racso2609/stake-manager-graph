@@ -102,4 +102,5 @@ export function handleStakeCreation(event: StakeCreation): void {
   entity.admin = admin.id;
   entity.lpToken = event.params.stakingReward.toString();
   entity.save();
+  admin.save();
 }
